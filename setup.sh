@@ -169,6 +169,7 @@ services:
     image: openclaw:local
     container_name: openclaw-gateway
     restart: unless-stopped
+    command: ["node", "dist/index.js", "gateway"]
     user: "1000:1000"
     cap_drop:
       - ALL
