@@ -36,7 +36,7 @@ N8N_WEBHOOK_SECRET=$(openssl rand -hex 32)
 N8N_WEBHOOK_PATH=$(cat /proc/sys/kernel/random/uuid)
 
 echo "=== Installing dependencies ==="
-apt update && apt install -y docker.io docker-compose-v2 ufw
+apt update && apt install -y docker.io docker-compose-v2 ufw git
 
 echo "=== Configuring firewall ==="
 ufw allow 22    # SSH
@@ -49,6 +49,12 @@ mkdir -p /opt/openclaw
 mkdir -p /opt/clawdbot/caddy_config
 mkdir -p /opt/clawdbot/local_files
 mkdir -p /root/.openclaw/workspace/skills/n8n-webhook
+
+echo "=== Building OpenClaw from source ==="
+git clone https://github.com/openclaw/openclaw.git /opt/openclaw-src
+cd /opt/openclaw-src
+docker build -t openclaw:local .
+cd /opt/openclaw
 
 echo "=== Creating OpenClaw config ==="
 cat > /root/.openclaw/openclaw.json << EOF
@@ -160,7 +166,7 @@ volumes:
 
 services:
   openclaw-gateway:
-    image: ghcr.io/openclaw/openclaw:latest
+    image: openclaw:local
     container_name: openclaw-gateway
     restart: unless-stopped
     user: "1000:1000"
