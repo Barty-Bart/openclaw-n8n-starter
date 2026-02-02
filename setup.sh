@@ -36,7 +36,13 @@ N8N_WEBHOOK_SECRET=$(openssl rand -hex 32)
 N8N_WEBHOOK_PATH=$(cat /proc/sys/kernel/random/uuid)
 
 echo "=== Installing dependencies ==="
-apt update && apt install -y docker.io docker-compose-v2
+apt update && apt install -y docker.io docker-compose-v2 ufw
+
+echo "=== Configuring firewall ==="
+ufw allow 22    # SSH
+ufw allow 80    # HTTP
+ufw allow 443   # HTTPS
+ufw --force enable
 
 echo "=== Creating directories ==="
 mkdir -p /opt/openclaw
